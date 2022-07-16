@@ -1,24 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from "./Pages/Home";
+import Timer from "./Pages/Timer";
 function App() {
+  const [time, setTime] = useState([0, 0]);
+  const [timerOn, setTimerOn] = useState([false, false]);
+  let interval = [null, null];
+  useEffect(() => {
+    for (let i = 0; i < timerOn.length; i++) {
+      if (timerOn[i]) {
+        interval[i] = setInterval(() => {
+          const updated = time.map((tim, index) => {
+            if (i === index) {
+              tim = tim + 10;gi
+            }
+            return tim;
+          });
+          setTime(updated);
+        }, 10);
+      } else if (!timerOn[i]) {
+        clearInterval(interval[i]);
+      }
+    }
+    return () => {
+      for (let i = 0; i < timerOn.length; i++) {
+        clearInterval(interval[i]);
+      }
+    };
+  }, [timerOn, time]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/timer"
+          element={
+            <Timer
+              time={time}
+              setTime={setTime}
+              timerOn={timerOn}
+              setTimerOn={setTimerOn}
+            />
+          }
+        />
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </Router>
   );
 }
 
